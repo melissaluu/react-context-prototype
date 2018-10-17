@@ -4,28 +4,31 @@ import AppContextState from './AppContextState';
 
 const AppContext = React.createContext();
 
+
+
 class AppContextProvider extends Component {
 
-
     state = merge({}, AppContextState.state);
-    
-    updatePerson = function(propName, value) {
-        this.setState(AppContextState.updaters.person(this.state, propName, value));
-    }.bind(this)
-    
-    updateOffice = function(propName, value) {
-        this.setState(AppContextState.updaters.office(this.state, propName, value));
-    }.bind(this)
+
+    generateUpdaters = function() {
+        return Object.keys(AppContextState.updaters).reduce((acc, key) => {
+            acc[key] = (propName, value) => {
+                this.setState(AppContextState.updaters[key](this.state, propName, value));
+            };
+            return acc;
+        }, {});
+    }.bind(this);
+
+    updaters = this.generateUpdaters();
 
     render () {
         return (
-        <AppContext.Provider value={{
-            state: this.state,
-            updatePerson: this.updatePerson, 
-            updateOffice: this.updateOffice, 
-        }}>
-            {this.props.children}
-        </AppContext.Provider>
+            <AppContext.Provider value={{
+                state: this.state,
+                updaters: this.generateUpdaters(),
+            }}>
+                {this.props.children}
+            </AppContext.Provider>
         )
     }
 }

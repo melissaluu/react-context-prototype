@@ -23,7 +23,7 @@ class Person extends Component {
     return (
       <AppContext.Consumer>
         {context => {
-          return (Object.keys(context.state.person).map((key) => <InputField label={key} value={context.state.person[key]} updater={context.updatePerson} />))
+          return (Object.keys(context.state.person).map((key) => <InputField label={key} value={context.state.person[key]} updater={context.updaters.person} />))
         }}
       </AppContext.Consumer>
     )
