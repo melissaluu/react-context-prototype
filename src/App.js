@@ -1,26 +1,44 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
+import AppContext, {AppContextProvider} from './AppContext';
+
+class InputField extends Component {
+
+  handleChange(event) {
+    this.props.updater(this.props.label, event.target.value);
+  }
+
+  render() {
+    return (
+      <div className="input-field">
+        <label htmlFor={this.props.label}>{this.props.label}</label>
+        <input id={this.props.label} type="text" value={this.props.value} onChange={this.handleChange.bind(this)}/>
+      </div>
+    )
+  }
+  
+}
+class Person extends Component {
+  render() {
+    return (
+      <AppContext.Consumer>
+        {context => {
+          return (Object.keys(context.state.person).map((key) => <InputField label={key} value={context.state.person[key]} updater={context.updatePerson} />))
+        }}
+      </AppContext.Consumer>
+    )
+  }
+}
 
 class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <AppContextProvider>
+        <div className="App">
+          <h1>React Context API Prototype</h1>
+          <Person />
+        </div>
+      </AppContextProvider>
     );
   }
 }
